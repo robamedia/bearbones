@@ -30,7 +30,7 @@ jobs:
           echo "Extracted VERSION: $VERSION" # Debugging line to check extracted version
           echo "version=$VERSION" >> $GITHUB_ENV
 
-      - name: Debug: Verify Version Environment Variable
+      - name: Debug Verify Version Environment Variable
         run: |
           echo "VERSION from GITHUB_ENV: ${{ env.version }}"
 
