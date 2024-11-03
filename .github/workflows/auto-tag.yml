@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   tag_and_release:
     runs-on: ubuntu-latest
@@ -19,6 +22,11 @@ jobs:
           VERSION=$(grep -i 'Version' style.css | awk '{print $2}')
           echo "Current theme version is $VERSION"
           echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: Clean up Git state
+        run: |
+          git reset --hard
+          git clean -fdx
 
       - name: Create new Git tag
         env:
