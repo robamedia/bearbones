@@ -20,8 +20,16 @@ jobs:
         id: get_version
         run: |
           VERSION=$(grep -i 'Version' style.css | awk '{print $2}')
-          echo "Current theme version is $VERSION"
+          if [ -z "$VERSION" ]; then
+            echo "Error: VERSION is empty. Check style.css for a valid version number."
+            exit 1
+          fi
+          echo "Extracted VERSION: $VERSION" # Debugging line to check extracted version
           echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: Debug: Verify Version Environment Variable
+        run: |
+          echo "VERSION from GITHUB_ENV: ${{ env.version }}"
 
       - name: Clean up Git state
         run: |
@@ -31,11 +39,12 @@ jobs:
       - name: Create new Git tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ env.version }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          if git tag -l | grep -q "$VERSION"; then
-            echo "Tag $VERSION already exists. Skipping tagging."
+          if git ls-remote --tags origin | grep -q "refs/tags/$VERSION"; then
+            echo "Tag $VERSION already exists on remote. Skipping tagging."
           else
             git tag -a "$VERSION" -m "Release $VERSION"
             git push origin "$VERSION"
