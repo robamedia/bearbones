@@ -31,26 +31,43 @@ function custom_github_update_check( $transient ) {
     // Get the current theme version
     $theme_version = wp_get_theme( THEME_SLUG )->get( 'Version' );
 
+    // GitHub API URL for the latest releafunction custom_github_update_check( $transient ) {
+    if ( empty( $transient->checked ) ) {
+        error_log('No themes found to check.');
+        return $transient;
+    }
+
+    // Log that we're in the update check function
+    error_log('Running custom GitHub update check...');
+
+    // Get the current theme version
+    $theme_version = wp_get_theme( THEME_SLUG )->get( 'Version' );
+    error_log('Current theme version: ' . $theme_version);
+
     // GitHub API URL for the latest release
     $remote_url = "https://api.github.com/repos/" . GITHUB_USER . "/" . GITHUB_REPO . "/releases/latest";
-
-    // Make the request to GitHub
     $response = wp_remote_get( $remote_url );
 
+    // Check for errors in the API request
     if ( is_wp_error( $response ) ) {
+        error_log('GitHub API error: ' . $response->get_error_message());
         return $transient;
     }
 
     $data = json_decode( wp_remote_retrieve_body( $response ) );
+    error_log('GitHub API response: ' . print_r( $data, true ));
 
     // Check if a new version is available
     if ( isset( $data->tag_name ) && version_compare( $theme_version, $data->tag_name, '<' ) ) {
+        error_log('New version available: ' . $data->tag_name);
         $transient->response[ THEME_SLUG ] = [
             'theme'       => THEME_SLUG,
             'new_version' => $data->tag_name,
             'url'         => $data->html_url,
             'package'     => $data->zipball_url,
         ];
+    } else {
+        error_log('No new version available or version check failed.');
     }
 
     return $transient;
