@@ -1,7 +1,9 @@
 <!-- wp:group {"align":"wide","backgroundColor":"secondary","textColor":"background","layout":{"type":"flex","justifyContent":"center"}} -->
-<div class="wp-block-group alignwide has-background-color has-secondary-background-color has-text-color">
 	<!-- wp:paragraph -->
-	<p>© <?php echo date('Y'); ?> Bearbones Theme</p>
+	<p>©
+		<!-- wp:shortcode -->
+		[current_year]
+		<!-- /wp:shortcode --> Bearbones Theme</p>
 	<!-- /wp:paragraph -->
-</div>
+
 <!-- /wp:group -->

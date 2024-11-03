@@ -56,3 +56,8 @@ function custom_github_update_check( $transient ) {
     return $transient;
 }
 add_filter( 'site_transient_update_themes', 'custom_github_update_check' );
+
+function display_current_year() {
+    return date('Y');
+}
+add_shortcode('current_year', 'display_current_year');
