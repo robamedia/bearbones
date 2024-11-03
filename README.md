@@ -1,0 +1,2 @@
+# bearbones
+Wordpress Barebones
