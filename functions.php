@@ -46,7 +46,15 @@ function custom_github_update_check( $transient ) {
 
     // GitHub API URL for the latest release
     $remote_url = "https://api.github.com/repos/" . GITHUB_USER . "/" . GITHUB_REPO . "/releases/latest";
-    $response = wp_remote_get( $remote_url );
+    //$response = wp_remote_get( $remote_url );
+
+    // Add authentication headers with the GitHub personal access token
+    $response = wp_remote_get( $remote_url, [
+        'headers' => [
+            'Authorization' => 'token ' . GITHUB_TOKEN
+        ]
+    ]);
+
 
     // Check for errors in the API request
     if ( is_wp_error( $response ) ) {
